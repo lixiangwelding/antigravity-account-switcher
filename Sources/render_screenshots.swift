@@ -69,8 +69,8 @@ struct ScreenshotGenerator {
         let r3 = RateLimitInfo(
             primary: RateLimitWindow(usedPercent: 48, resetsAt: now.addingTimeInterval(3600 * 4.8)),
             secondary: RateLimitWindow(usedPercent: 12, resetsAt: now.addingTimeInterval(3600 * 55)),
-            claudePrimary: nil,
-            claudeSecondary: nil,
+            claudePrimary: RateLimitWindow(usedPercent: 18, resetsAt: now.addingTimeInterval(3600 * 3.2)),
+            claudeSecondary: RateLimitWindow(usedPercent: 25, resetsAt: now.addingTimeInterval(3600 * 62)),
             planType: "PRO"
         )
 
@@ -111,7 +111,7 @@ struct ScreenshotGenerator {
 
         // 1. 主页面
         state.currentPage = .main
-        renderView(PopoverRootView(), size: NSSize(width: 326, height: 350), filename: "screenshot-main.png")
+        renderView(PopoverRootView(), size: NSSize(width: 326, height: 395), filename: "screenshot-main.png")
 
         // 2. 管理账号页面 (列表)
         state.currentPage = .manageAccounts

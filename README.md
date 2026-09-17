@@ -15,11 +15,14 @@ macOS 菜单栏反重力（Google Antigravity）多账号切换与配额监控�
 ## ✨ 核心特性
 
 - 🌌 **1:1 现代 SwiftUI 悬浮窗**：原汁原味复刻磨砂玻璃悬浮卡片（Popover），当前账号夜空深蓝微光高亮，非活跃账号支持**一键点击即切号**。
-- 🏷️ **订阅级别徽标（PRO / FREE / ULTRA）**：自动同步 Google Code Assist 订阅层级，卡片与管理列表中清晰高亮标识（紫色 `PRO`、天蓝 `FREE`、金橙 `ULTRA`）。
-- 📊 **真实动态配额与多维度进度条（解决恒为 100%）**：
-  - 接入 Antigravity 实际采用的 `daily-cloudcode-pa` 动态端点，与客户端用量完全一致。
-  - **5 小时窗口**：优先匹配 Gemini 核心模型池消耗，细胶囊亮蓝进度条 + 剩余百分比 + 重置时间倒计时。
-  - **7 天窗口**：每周总限额动态消耗，细胶囊亮蓝进度条 + 剩余百分比 + 重置时间倒计时。
+- 🏷️ **订阅级别徽标（PRO / FREE / ULTRA）**：
+  - 深度聚合 Google Code Assist 与 Google One `paidTier` / `userTier` / `g1Tier` 多层订阅架构，精准识别 Google AI Pro 与 Ultra 付费订阅；
+  - 账号卡片与管理列表中高光呈现专属色阶徽标（霓虹紫 `PRO`、天蓝 `FREE`、琥珀金 `ULTRA`）；
+  - 支持在【管理账号】中直接点击徽标一键循环切换与自定义覆盖。
+- 📊 **Gemini & Claude 多模型细分配额监控（告别恒为 100% 假数据）**：
+  - 全面对齐 Antigravity 真实使用的 `daily-cloudcode-pa` 动态端点，实时展示动态消耗；
+  - **Gemini 模型池**：展示 5 小时与 7 天核心配额及精确重置时间；
+  - **Claude / 3P 模型池**：独立薰衣草紫标签展示 Claude 3.5 Sonnet / Opus 5 小时与 7 天剩余配额；
   - 低配额智能变色预警（<25% 橙色，<10% 红色高亮）。
 - 👥 **二级【管理账号】页面**：
   - 直观查看所有账号档案、订阅层级与当前活跃状态。
@@ -36,7 +39,7 @@ macOS 菜单栏反重力（Google Antigravity）多账号切换与配额监控�
   - 自动刷新周期设置（5分钟、15分钟、30分钟、1小时、手动）。
   - 5小时 / 7天 低配额告警阈值配置。
   - 一键在访达中打开配置目录（`~/.antigravity-switcher`）。
-- 🎨 **全新反重力质感图标**：融合反重力量子核心与多轨道节点，原生支持 Retina 全套分辨率。
+- 🎨 **全新反重力质感图标与极简菜单栏标识**：融合反重力量子核心与多轨道节点，原生支持 Retina 全套分辨率。
 
 ---
 
@@ -44,8 +47,8 @@ macOS 菜单栏反重力（Google Antigravity）多账号切换与配额监控�
 
 前往 [Releases 页面](https://github.com/lixiangwelding/antigravity-account-switcher/releases) 下载最新发行版：
 
-- **DMG 安装包**：下载 `Antigravity-Switcher-v1.1.0.dmg`，双击后将 `Antigravity Switcher` 拖入 `Applications` 即可。
-- **ZIP 归档包**：下载 `Antigravity-Switcher-v1.1.0-macOS.zip` 解压使用。
+- **DMG 安装包**：下载 `Antigravity-Switcher-v1.2.0.dmg`，双击后将 `Antigravity Switcher` 拖入 `Applications` 即可。
+- **ZIP 归档包**：下载 `Antigravity-Switcher-v1.2.0-macOS.zip` 解压使用。
 
 ---
 
