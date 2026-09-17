@@ -44,6 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        statusItem.autosaveName = "AntigravitySwitcherItem"
         if let button = statusItem.button {
             button.action = #selector(togglePopover(_:))
             button.target = self
@@ -54,7 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
     private func setupPopover() {
         popover = NSPopover()
-        popover.contentSize = NSSize(width: 326, height: 380)
+        popover.contentSize = NSSize(width: 336, height: 440)
         popover.behavior = .transient
         popover.animates = true
         popover.delegate = self
@@ -145,175 +146,52 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
 
     private func makeMenuBarIcon(state: Int) -> NSImage {
+        let symbolName: String
+        switch state {
+        case 2:
+            symbolName = "exclamationmark.triangle"
+        case 1:
+            symbolName = "sparkle"
+        default:
+            symbolName = "sparkles"
+        }
+
+        let config = NSImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+        if let sym = NSImage(systemSymbolName: symbolName, accessibilityDescription: "Antigravity Switcher")?.withSymbolConfiguration(config) {
+            sym.isTemplate = true
+            return sym
+        }
+
         let s: CGFloat = 18
         let img = NSImage(size: NSSize(width: s, height: s))
         img.lockFocus()
-        NSColor.black.setStroke()
         NSColor.black.setFill()
 
-        switch state {
-        case 2:
-            drawLyingAI(s: s)
-        case 1:
-            drawTiredAI(s: s)
-        default:
-            drawStandingAI(s: s)
-        }
+        let path = NSBezierPath()
+        let cx = s * 0.5
+        let cy = s * 0.5
+        let rOuter: CGFloat = 7.5
+        let rInner: CGFloat = 2.2
+
+        path.move(to: NSPoint(x: cx, y: cy + rOuter))
+        path.curve(to: NSPoint(x: cx + rOuter, y: cy),
+                   controlPoint1: NSPoint(x: cx + rInner, y: cy + rInner),
+                   controlPoint2: NSPoint(x: cx + rInner, y: cy + rInner))
+        path.curve(to: NSPoint(x: cx, y: cy - rOuter),
+                   controlPoint1: NSPoint(x: cx + rInner, y: cy - rInner),
+                   controlPoint2: NSPoint(x: cx + rInner, y: cy - rInner))
+        path.curve(to: NSPoint(x: cx - rOuter, y: cy),
+                   controlPoint1: NSPoint(x: cx - rInner, y: cy - rInner),
+                   controlPoint2: NSPoint(x: cx - rInner, y: cy - rInner))
+        path.curve(to: NSPoint(x: cx, y: cy + rOuter),
+                   controlPoint1: NSPoint(x: cx - rInner, y: cy + rInner),
+                   controlPoint2: NSPoint(x: cx - rInner, y: cy + rInner))
+        path.close()
+        path.fill()
 
         img.unlockFocus()
         img.isTemplate = true
         return img
-    }
-
-    private func drawStandingAI(s: CGFloat) {
-        let cx = s * 0.5
-        let antennaPath = NSBezierPath()
-        antennaPath.move(to: NSPoint(x: cx, y: s * 0.78))
-        antennaPath.line(to: NSPoint(x: cx, y: s * 0.88))
-        antennaPath.lineWidth = 1.2
-        antennaPath.lineCapStyle = .round
-        antennaPath.stroke()
-        NSBezierPath(ovalIn: NSRect(x: cx - 1.5, y: s * 0.88, width: 3, height: 3)).fill()
-
-        let headR: CGFloat = s * 0.15
-        let headY = s * 0.65
-        NSBezierPath(ovalIn: NSRect(x: cx - headR, y: headY, width: headR * 2, height: headR * 2)).stroke()
-        let eyeR: CGFloat = 1.2
-        NSBezierPath(ovalIn: NSRect(x: cx - headR * 0.5 - eyeR, y: headY + headR * 0.7, width: eyeR * 2, height: eyeR * 2)).fill()
-        NSBezierPath(ovalIn: NSRect(x: cx + headR * 0.5 - eyeR, y: headY + headR * 0.7, width: eyeR * 2, height: eyeR * 2)).fill()
-
-        let bodyPath = NSBezierPath()
-        bodyPath.move(to: NSPoint(x: cx, y: headY))
-        bodyPath.line(to: NSPoint(x: cx, y: s * 0.28))
-        bodyPath.lineWidth = 1.5
-        bodyPath.lineCapStyle = .round
-        bodyPath.stroke()
-
-        let armPath = NSBezierPath()
-        armPath.move(to: NSPoint(x: cx, y: s * 0.52))
-        armPath.line(to: NSPoint(x: cx - s * 0.2, y: s * 0.6))
-        armPath.move(to: NSPoint(x: cx, y: s * 0.52))
-        armPath.line(to: NSPoint(x: cx + s * 0.2, y: s * 0.6))
-        armPath.lineWidth = 1.3
-        armPath.lineCapStyle = .round
-        armPath.stroke()
-
-        let legPath = NSBezierPath()
-        legPath.move(to: NSPoint(x: cx, y: s * 0.28))
-        legPath.line(to: NSPoint(x: cx - s * 0.14, y: s * 0.08))
-        legPath.move(to: NSPoint(x: cx, y: s * 0.28))
-        legPath.line(to: NSPoint(x: cx + s * 0.14, y: s * 0.08))
-        legPath.lineWidth = 1.3
-        legPath.lineCapStyle = .round
-        legPath.stroke()
-    }
-
-    private func drawTiredAI(s: CGFloat) {
-        let cx = s * 0.5
-        let antennaPath = NSBezierPath()
-        antennaPath.move(to: NSPoint(x: cx, y: s * 0.75))
-        antennaPath.line(to: NSPoint(x: cx - s * 0.05, y: s * 0.83))
-        antennaPath.lineWidth = 1.2
-        antennaPath.lineCapStyle = .round
-        antennaPath.stroke()
-        NSBezierPath(ovalIn: NSRect(x: cx - s * 0.05 - 1.5, y: s * 0.82, width: 3, height: 3)).fill()
-
-        let headR: CGFloat = s * 0.15
-        let headY = s * 0.6
-        NSBezierPath(ovalIn: NSRect(x: cx - headR - s * 0.02, y: headY, width: headR * 2, height: headR * 2)).stroke()
-        let eyePath = NSBezierPath()
-        eyePath.move(to: NSPoint(x: cx - headR * 0.7, y: headY + headR * 0.85))
-        eyePath.line(to: NSPoint(x: cx - headR * 0.1, y: headY + headR * 0.75))
-        eyePath.move(to: NSPoint(x: cx + headR * 0.1, y: headY + headR * 0.85))
-        eyePath.line(to: NSPoint(x: cx + headR * 0.7, y: headY + headR * 0.75))
-        eyePath.lineWidth = 1.0
-        eyePath.lineCapStyle = .round
-        eyePath.stroke()
-
-        let bodyPath = NSBezierPath()
-        bodyPath.move(to: NSPoint(x: cx - s * 0.02, y: headY))
-        bodyPath.curve(to: NSPoint(x: cx, y: s * 0.24),
-                       controlPoint1: NSPoint(x: cx + s * 0.05, y: s * 0.5),
-                       controlPoint2: NSPoint(x: cx - s * 0.05, y: s * 0.35))
-        bodyPath.lineWidth = 1.5
-        bodyPath.lineCapStyle = .round
-        bodyPath.stroke()
-
-        let armPath = NSBezierPath()
-        armPath.move(to: NSPoint(x: cx, y: s * 0.48))
-        armPath.line(to: NSPoint(x: cx - s * 0.18, y: s * 0.32))
-        armPath.move(to: NSPoint(x: cx, y: s * 0.48))
-        armPath.line(to: NSPoint(x: cx + s * 0.18, y: s * 0.32))
-        armPath.lineWidth = 1.3
-        armPath.lineCapStyle = .round
-        armPath.stroke()
-
-        let legPath = NSBezierPath()
-        legPath.move(to: NSPoint(x: cx, y: s * 0.24))
-        legPath.line(to: NSPoint(x: cx - s * 0.12, y: s * 0.06))
-        legPath.move(to: NSPoint(x: cx, y: s * 0.24))
-        legPath.line(to: NSPoint(x: cx + s * 0.12, y: s * 0.06))
-        legPath.lineWidth = 1.3
-        legPath.lineCapStyle = .round
-        legPath.stroke()
-
-        NSBezierPath(ovalIn: NSRect(x: cx + headR + 1, y: headY + headR * 0.5, width: 2, height: 3)).fill()
-    }
-
-    private func drawLyingAI(s: CGFloat) {
-        let cy = s * 0.38
-        let groundPath = NSBezierPath()
-        groundPath.move(to: NSPoint(x: s * 0.05, y: s * 0.15))
-        groundPath.line(to: NSPoint(x: s * 0.95, y: s * 0.15))
-        groundPath.lineWidth = 0.8
-        groundPath.lineCapStyle = .round
-        groundPath.stroke()
-
-        let headR: CGFloat = s * 0.13
-        let headX = s * 0.75
-        NSBezierPath(ovalIn: NSRect(x: headX, y: cy - headR + s * 0.02, width: headR * 2, height: headR * 2)).stroke()
-        let exPath = NSBezierPath()
-        let eyeCx1 = headX + headR * 0.6
-        let eyeCx2 = headX + headR * 1.4
-        let eyeCy = cy + s * 0.05
-        let ex: CGFloat = 1.5
-        exPath.move(to: NSPoint(x: eyeCx1 - ex, y: eyeCy - ex)); exPath.line(to: NSPoint(x: eyeCx1 + ex, y: eyeCy + ex))
-        exPath.move(to: NSPoint(x: eyeCx1 + ex, y: eyeCy - ex)); exPath.line(to: NSPoint(x: eyeCx1 - ex, y: eyeCy + ex))
-        exPath.move(to: NSPoint(x: eyeCx2 - ex, y: eyeCy - ex)); exPath.line(to: NSPoint(x: eyeCx2 + ex, y: eyeCy + ex))
-        exPath.move(to: NSPoint(x: eyeCx2 + ex, y: eyeCy - ex)); exPath.line(to: NSPoint(x: eyeCx2 - ex, y: eyeCy + ex))
-        exPath.lineWidth = 1.0
-        exPath.lineCapStyle = .round
-        exPath.stroke()
-
-        let bodyPath = NSBezierPath()
-        bodyPath.move(to: NSPoint(x: headX, y: cy))
-        bodyPath.line(to: NSPoint(x: s * 0.28, y: cy))
-        bodyPath.lineWidth = 1.5
-        bodyPath.lineCapStyle = .round
-        bodyPath.stroke()
-
-        let legPath = NSBezierPath()
-        legPath.move(to: NSPoint(x: s * 0.28, y: cy))
-        legPath.line(to: NSPoint(x: s * 0.15, y: cy + s * 0.1))
-        legPath.move(to: NSPoint(x: s * 0.28, y: cy))
-        legPath.line(to: NSPoint(x: s * 0.12, y: cy - s * 0.08))
-        legPath.lineWidth = 1.3
-        legPath.lineCapStyle = .round
-        legPath.stroke()
-
-        let armPath = NSBezierPath()
-        armPath.move(to: NSPoint(x: s * 0.55, y: cy))
-        armPath.line(to: NSPoint(x: s * 0.5, y: cy + s * 0.15))
-        armPath.move(to: NSPoint(x: s * 0.45, y: cy))
-        armPath.line(to: NSPoint(x: s * 0.42, y: cy - s * 0.12))
-        armPath.lineWidth = 1.3
-        armPath.lineCapStyle = .round
-        armPath.stroke()
-
-        let zFont = NSFont.systemFont(ofSize: 6, weight: .bold)
-        ("z" as NSString).draw(at: NSPoint(x: s * 0.82, y: s * 0.6), withAttributes: [
-            .font: zFont, .foregroundColor: NSColor.black
-        ])
     }
 
     private func sendNotification(title: String, body: String) {

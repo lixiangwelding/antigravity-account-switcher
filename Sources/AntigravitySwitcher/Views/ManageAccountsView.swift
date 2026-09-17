@@ -109,19 +109,31 @@ struct ManageAccountsView: View {
                                     .foregroundColor(.white)
                                     .lineLimit(1)
 
-                                Text(acct.planLabel)
-                                    .font(.system(size: 8.5, weight: .heavy))
-                                    .foregroundColor(acct.planColor)
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical, 1.5)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .fill(acct.planBackgroundColor)
-                                    )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .stroke(acct.planColor.opacity(0.35), lineWidth: 0.5)
-                                    )
+                                Button(action: {
+                                    let nextPlan: String
+                                    switch acct.planLabel {
+                                    case "PRO": nextPlan = "ULTRA"
+                                    case "ULTRA": nextPlan = "FREE"
+                                    default: nextPlan = "PRO"
+                                    }
+                                    appState.setAccountPlan(alias: acct.alias, plan: nextPlan)
+                                }) {
+                                    Text(acct.planLabel)
+                                        .font(.system(size: 8.5, weight: .heavy))
+                                        .foregroundColor(acct.planColor)
+                                        .padding(.horizontal, 5)
+                                        .padding(.vertical, 1.5)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(acct.planBackgroundColor)
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .stroke(acct.planColor.opacity(0.35), lineWidth: 0.5)
+                                        )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .help("点击切换订阅级别 (PRO / ULTRA / FREE)")
 
                                 if isActive {
                                     Text("活跃")

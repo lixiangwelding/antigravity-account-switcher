@@ -52,50 +52,98 @@ struct AccountCardView: View {
                     // 5小时与7天用量
                     switch usageState {
                     case .success(let info):
-                        // 5小时窗口
-                        if let primary = info.primary {
-                            HStack(spacing: 6) {
-                                Text("5 小时")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(Color(white: 0.65))
-                                    .frame(width: 36, alignment: .leading)
+                        VStack(alignment: .leading, spacing: 4) {
+                            // Gemini 模型组
+                            if let primary = info.primary {
+                                HStack(spacing: 5) {
+                                    Text("Gemini 5h")
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundColor(Color(white: 0.7))
+                                        .frame(width: 58, alignment: .leading)
 
-                                QuotaProgressBar(remaining: primary.remaining, width: 68)
+                                    QuotaProgressBar(remaining: primary.remaining, width: 62)
 
-                                Text("\(primary.remaining)%")
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(Color(primary.textColor))
-                                    .frame(width: 32, alignment: .trailing)
+                                    Text("\(primary.remaining)%")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(Color(primary.textColor))
+                                        .frame(width: 30, alignment: .trailing)
 
-                                if let reset = primary.resetsAt {
-                                    Text(formatResetTime(reset))
-                                        .font(.system(size: 9.5))
-                                        .foregroundColor(Color(white: 0.5))
-                                        .lineLimit(1)
+                                    if let reset = primary.resetsAt {
+                                        Text(formatResetTime(reset))
+                                            .font(.system(size: 8.5))
+                                            .foregroundColor(Color(white: 0.45))
+                                            .lineLimit(1)
+                                    }
                                 }
                             }
-                        }
 
-                        // 7天窗口
-                        if let secondary = info.secondary {
-                            HStack(spacing: 6) {
-                                Text("7 天  ")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(Color(white: 0.65))
-                                    .frame(width: 36, alignment: .leading)
+                            if let secondary = info.secondary {
+                                HStack(spacing: 5) {
+                                    Text("Gemini 7d")
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundColor(Color(white: 0.7))
+                                        .frame(width: 58, alignment: .leading)
 
-                                QuotaProgressBar(remaining: secondary.remaining, width: 68)
+                                    QuotaProgressBar(remaining: secondary.remaining, width: 62)
 
-                                Text("\(secondary.remaining)%")
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(Color(secondary.textColor))
-                                    .frame(width: 32, alignment: .trailing)
+                                    Text("\(secondary.remaining)%")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(Color(secondary.textColor))
+                                        .frame(width: 30, alignment: .trailing)
 
-                                if let reset = secondary.resetsAt {
-                                    Text(formatResetTime(reset))
-                                        .font(.system(size: 9.5))
-                                        .foregroundColor(Color(white: 0.5))
-                                        .lineLimit(1)
+                                    if let reset = secondary.resetsAt {
+                                        Text(formatResetTime(reset))
+                                            .font(.system(size: 8.5))
+                                            .foregroundColor(Color(white: 0.45))
+                                            .lineLimit(1)
+                                    }
+                                }
+                            }
+
+                            // Claude / 3P 模型组（如果有且不同于主模型）
+                            if let cp = info.claudePrimary {
+                                HStack(spacing: 5) {
+                                    Text("Claude 5h")
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundColor(Color(red: 0.85, green: 0.65, blue: 0.95))
+                                        .frame(width: 58, alignment: .leading)
+
+                                    QuotaProgressBar(remaining: cp.remaining, width: 62)
+
+                                    Text("\(cp.remaining)%")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(Color(cp.textColor))
+                                        .frame(width: 30, alignment: .trailing)
+
+                                    if let reset = cp.resetsAt {
+                                        Text(formatResetTime(reset))
+                                            .font(.system(size: 8.5))
+                                            .foregroundColor(Color(white: 0.45))
+                                            .lineLimit(1)
+                                    }
+                                }
+                            }
+
+                            if let cs = info.claudeSecondary {
+                                HStack(spacing: 5) {
+                                    Text("Claude 7d")
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundColor(Color(red: 0.85, green: 0.65, blue: 0.95))
+                                        .frame(width: 58, alignment: .leading)
+
+                                    QuotaProgressBar(remaining: cs.remaining, width: 62)
+
+                                    Text("\(cs.remaining)%")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(Color(cs.textColor))
+                                        .frame(width: 30, alignment: .trailing)
+
+                                    if let reset = cs.resetsAt {
+                                        Text(formatResetTime(reset))
+                                            .font(.system(size: 8.5))
+                                            .foregroundColor(Color(white: 0.45))
+                                            .lineLimit(1)
+                                    }
                                 }
                             }
                         }

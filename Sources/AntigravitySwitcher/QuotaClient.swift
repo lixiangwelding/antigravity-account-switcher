@@ -130,16 +130,26 @@ class RateLimitClient {
                   let data = data,
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
 
+            let paidTier = json["paidTier"] as? [String: Any] ?? [:]
+            let userTier = json["userTier"] as? [String: Any] ?? [:]
             let currentTier = json["currentTier"] as? [String: Any] ?? [:]
-            let tierId = (currentTier["id"] as? String ?? "").lowercased()
-            let tierName = (currentTier["name"] as? String ?? "").lowercased()
+
+            let allTierStrings = [
+                paidTier["id"] as? String ?? "",
+                paidTier["name"] as? String ?? "",
+                userTier["id"] as? String ?? "",
+                userTier["name"] as? String ?? "",
+                currentTier["id"] as? String ?? "",
+                currentTier["name"] as? String ?? "",
+                json["g1Tier"] as? String ?? ""
+            ].map { $0.lowercased() }
 
             var plan = "FREE"
-            if tierId.contains("pro") || tierName.contains("pro") {
-                plan = "PRO"
-            } else if tierId.contains("ultra") || tierName.contains("ultra") {
+            if allTierStrings.contains(where: { $0.contains("ultra") }) {
                 plan = "ULTRA"
-            } else if tierId.contains("standard") {
+            } else if allTierStrings.contains(where: { $0.contains("pro") }) {
+                plan = "PRO"
+            } else if allTierStrings.contains(where: { $0.contains("standard") }) {
                 plan = "STANDARD"
             } else {
                 plan = "FREE"

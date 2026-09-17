@@ -132,6 +132,11 @@ class AppState: ObservableObject {
         return result
     }
 
+    func setAccountPlan(alias: String, plan: String) {
+        auth.writePlan(alias: alias, plan: plan)
+        reloadAccounts()
+    }
+
     // MARK: - Usage Refresh
 
     func refreshAllUsage() {
