@@ -1,36 +1,70 @@
 # Antigravity Account Switcher
 
-macOS 菜单栏反重力（Google Antigravity）多账号切换器，一比一移植自 [jieguangzhou/CodexSwitcher](https://github.com/jieguangzhou/CodexSwitcher)（Codex 版），把 Codex 的 auth.json 机制替换为 Antigravity 的凭据机制。
+macOS 菜单栏反重力（Google Antigravity）多账号切换与配额监控工具。1:1 对齐 Codex Switcher 现代体验，采用原生 **SwiftUI + NSPopover** 毛玻璃暗黑质感卡片设计，支持多账号无缝切换、配额实时监控、引导式添加新账号与完整偏好设置。
 
-## 功能（与 CodexSwitcher 对齐）
+---
 
-- 菜单栏一键切换反重力账号（AI 小人图标，配额低会变累/躺平 + 系统通知）
-- 所有账号的 5小时 / 7天 配额进度条 + 重置时间
-- 自动同步：在 Antigravity 里登录新 Google 账号后自动入库（监听凭据变化）
-- 低配额告警（阈值可在设置里调）
-- 开机自启、刷新间隔、切换后自动重启 Antigravity 均可配置
+## ✨ 核心特性
 
-## 构建 / 运行
+- 🌌 **1:1 现代 SwiftUI 悬浮窗**：原汁原味复刻磨砂玻璃悬浮卡片（Popover），当前账号夜空深蓝微光高亮，非活跃账号支持**一键点击即切号**。
+- 📊 **多维度用量进度条**：
+  - **5 小时窗口**：细胶囊进度条 + 剩余百分比 + 重置时间倒计时。
+  - **7 天窗口**：细胶囊进度条 + 剩余百分比 + 重置时间倒计时。
+  - 低配额智能变色预警（<25% 橙色，<10% 红色高亮）。
+- 👥 **二级【管理账号】页面**：
+  - 直观查看所有账号档案与当前活跃状态。
+  - 支持内联重命名别名（如修改成工作号/个人主号）。
+  - 保护当前活跃账号，支持删除闲置历史账号。
+- ➕ **三种【添加账号】方式（零命令行）**：
+  - **引导登录（推荐）**：点击开始后自动暂存当前账号并唤起 Antigravity，浏览器授权登录完成后，Switcher 自动捕获新 Token 与 Google 邮箱入库！
+  - **检测当前**：如果已在客户端登录新账号，一键识别并保存为新 Profile。
+  - **手动导入**：支持粘贴 OAuth Token JSON 快速录入。
+- ⚙️ **二级【设置】工作台**：
+  - 开机自启（联动 macOS `SMAppService`）。
+  - 切换账号时自动重启 Antigravity（确保客户端即刻生效）。
+  - 顶部菜单栏图标旁常驻显示 5h 剩余配额百分比。
+  - 自动刷新周期设置（5分钟、15分钟、30分钟、1小时、手动）。
+  - 5小时 / 7天 低配额告警阈值配置。
+  - 一键在访达中打开配置目录（`~/.antigravity-switcher`）。
+- 🎨 **全新反重力质感图标**：融合反重力量子核心与多轨道节点，原生支持 Retina 全套分辨率。
+
+---
+
+## 📥 下载与安装
+
+前往 [Releases 页面](https://github.com/lixiangwelding/antigravity-account-switcher/releases) 下载最新发行版：
+
+- **DMG 安装包**：下载 `Antigravity-Switcher-v1.1.0.dmg`，双击后将 `Antigravity Switcher` 拖入 `Applications` 即可。
+- **ZIP 归档包**：下载 `Antigravity-Switcher-v1.1.0-macOS.zip` 解压使用。
+
+---
+
+## 🛠 本地构建
+
+系统要求：macOS 13.0+ / Xcode Command Line Tools (Swift 5.9+)
 
 ```bash
-bash build.sh
-open "build/Antigravity Switcher.app"
+git clone https://github.com/lixiangwelding/antigravity-account-switcher.git
+cd antigravity-account-switcher
+
+# 编译并运行
+./build.sh
+
+# 自动生成 DMG 与 ZIP 发布包
+./package.sh
 ```
 
-## 原理
+---
 
-| | CodexSwitcher（原版） | 本项目（反重力版） |
+## ⚙️ 底层原理
+
+| 功能点 | Codex Switcher | Antigravity Switcher |
 |---|---|---|
-| 活动凭据 | `~/.codex/auth.json` | 钥匙串 `gemini/antigravity`（go-keyring-base64）+ `~/.gemini/jetski-standalone-oauth-token`（双写） |
-| 账号库 | `~/.codex/accounts/*.json` | `~/.antigravity-switcher/accounts/*.json`（token 快照 + `.meta.json` 存邮箱） |
-| 账号名 | id_token JWT 里的 email | userinfo API（`oauth2/v2/userinfo`）解析邮箱，自动改名成邮箱前缀 |
-| 用量接口 | `chatgpt.com/backend-api/wham/usage` | `cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary`（UA: antigravity） |
-| token 刷新 | 无需（JWT 长效） | refresh_token + Antigravity 同款公共 OAuth client 换新 access_token |
-| 生效方式 | 立即（CLI 每次读文件） | 退出 Antigravity → 换凭据 → 重启（设置里可关） |
+| **活动凭据存储** | `~/.codex/auth.json` | 钥匙串 `gemini/antigravity` + `~/.gemini/jetski-standalone-oauth-token` 双写 |
+| **多账号档案库** | `~/.codex/accounts/*.json` | `~/.antigravity-switcher/accounts/*.json` |
+| **账号身份识别** | JWT id_token 解码 | Google UserInfo API (`oauth2/v2/userinfo`) 解析邮箱 |
+| **用量与配额获取** | ChatGPT backend usage API | Google Cloud Code Quota API (`retrieveUserQuotaSummary`) |
+| **凭据自动刷新** | 无需（长效 JWT） | Google OAuth 自动刷新 access_token 并持久化快照 |
+| **客户端刷新同步** | 退出 Codex → 换凭据 → 重启 | 优雅退出 Antigravity → 同步凭据 → 自动重新拉起 |
 
-配置文件：`~/.antigravity-switcher/config.json`。
-
-## 注意
-
-- 第一次切换后，Antigravity 读钥匙串可能弹一次授权确认，点「始终允许」即可。
-- 凭据只存在本机（`~/.antigravity-switcher/`）。
+> 本地数据与隐私：所有 Token 与账号数据均仅保存在本机 `~/.antigravity-switcher/`，绝不上传任何第三方服务器。
