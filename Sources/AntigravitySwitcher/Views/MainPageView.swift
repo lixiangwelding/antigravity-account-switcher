@@ -65,7 +65,9 @@ struct MainPageView: View {
 
                     if let actionTitle = appState.bannerActionTitle {
                         Button(action: {
-                            appState.refreshAllUsage()
+                            if let url = URL(string: "https://github.com/lixiangwelding/antigravity-account-switcher/releases/latest") {
+                                NSWorkspace.shared.open(url)
+                            }
                         }) {
                             Text(actionTitle)
                                 .font(.system(size: 12, weight: .medium))

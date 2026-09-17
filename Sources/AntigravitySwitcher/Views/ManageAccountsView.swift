@@ -109,6 +109,20 @@ struct ManageAccountsView: View {
                                     .foregroundColor(.white)
                                     .lineLimit(1)
 
+                                Text(acct.planLabel)
+                                    .font(.system(size: 8.5, weight: .heavy))
+                                    .foregroundColor(acct.planColor)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 1.5)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(acct.planBackgroundColor)
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .stroke(acct.planColor.opacity(0.35), lineWidth: 0.5)
+                                    )
+
                                 if isActive {
                                     Text("活跃")
                                         .font(.system(size: 9, weight: .bold))

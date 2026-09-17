@@ -27,11 +27,27 @@ struct AccountCardView: View {
 
                 // 右侧账号信息与用量
                 VStack(alignment: .leading, spacing: 6) {
-                    // 账号主名称
-                    Text(account.displayName)
-                        .font(.system(size: 13.5, weight: .bold))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
+                    // 账号主名称与 Plan 徽标
+                    HStack(spacing: 6) {
+                        Text(account.displayName)
+                            .font(.system(size: 13.5, weight: .bold))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+
+                        Text(account.planLabel)
+                            .font(.system(size: 8.5, weight: .heavy))
+                            .foregroundColor(account.planColor)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1.5)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(account.planBackgroundColor)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(account.planColor.opacity(0.35), lineWidth: 0.5)
+                            )
+                    }
 
                     // 5小时与7天用量
                     switch usageState {

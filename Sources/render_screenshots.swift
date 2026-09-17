@@ -23,6 +23,7 @@ struct ScreenshotGenerator {
         let acct1 = AGAccount(
             alias: "1987414957",
             email: "1987414957@gmail.com",
+            plan: "FREE",
             authMethod: "consumer",
             accessToken: "fake",
             refreshToken: "fake1",
@@ -31,6 +32,7 @@ struct ScreenshotGenerator {
         let acct2 = AGAccount(
             alias: "2516017911",
             email: "2516017911@gmail.com",
+            plan: "PRO",
             authMethod: "consumer",
             accessToken: "fake",
             refreshToken: "fake2",
@@ -39,6 +41,7 @@ struct ScreenshotGenerator {
         let acct3 = AGAccount(
             alias: "mathildacichon33214",
             email: "mathildacichon33214@gmail.com",
+            plan: "PRO",
             authMethod: "consumer",
             accessToken: "fake",
             refreshToken: "fake3",
@@ -50,16 +53,25 @@ struct ScreenshotGenerator {
 
         let now = Date()
         let r1 = RateLimitInfo(
-            primary: nil,
-            secondary: RateLimitWindow(usedPercent: 100, resetsAt: now.addingTimeInterval(3600 * 40))
+            primary: RateLimitWindow(usedPercent: 78, resetsAt: now.addingTimeInterval(3600 * 2.1)),
+            secondary: RateLimitWindow(usedPercent: 100, resetsAt: now.addingTimeInterval(3600 * 40)),
+            claudePrimary: nil,
+            claudeSecondary: nil,
+            planType: "FREE"
         )
         let r2 = RateLimitInfo(
-            primary: RateLimitWindow(usedPercent: 24, resetsAt: now.addingTimeInterval(3600 * 1.5)),
-            secondary: RateLimitWindow(usedPercent: 90, resetsAt: now.addingTimeInterval(3600 * 48))
+            primary: RateLimitWindow(usedPercent: 29, resetsAt: now.addingTimeInterval(3600 * 1.5)),
+            secondary: RateLimitWindow(usedPercent: 8, resetsAt: now.addingTimeInterval(3600 * 48)),
+            claudePrimary: nil,
+            claudeSecondary: nil,
+            planType: "PRO"
         )
         let r3 = RateLimitInfo(
-            primary: RateLimitWindow(usedPercent: 0, resetsAt: now.addingTimeInterval(3600 * 4.8)),
-            secondary: RateLimitWindow(usedPercent: 95, resetsAt: now.addingTimeInterval(3600 * 55))
+            primary: RateLimitWindow(usedPercent: 48, resetsAt: now.addingTimeInterval(3600 * 4.8)),
+            secondary: RateLimitWindow(usedPercent: 12, resetsAt: now.addingTimeInterval(3600 * 55)),
+            claudePrimary: nil,
+            claudeSecondary: nil,
+            planType: "PRO"
         )
 
         state.usageByAlias = [

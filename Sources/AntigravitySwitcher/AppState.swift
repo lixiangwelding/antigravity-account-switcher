@@ -32,8 +32,8 @@ class AppState: ObservableObject {
     @Published var addAccountError: String? = nil
 
     // Banner
-    @Published var bannerText: String? = "发现新版本 1.1.0"
-    @Published var bannerActionTitle: String? = "更新..."
+    @Published var bannerText: String? = nil
+    @Published var bannerActionTitle: String? = nil
 
     private var loginPollTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
@@ -49,6 +49,27 @@ class AppState: ObservableObject {
                 self?.usageByAlias = self?.quota.usageByAlias ?? [:]
             }
         }
+        checkForUpdates()
+    }
+
+    func checkForUpdates() {
+        guard let url = URL(string: "https://api.github.com/repos/lixiangwelding/antigravity-account-switcher/releases/latest") else { return }
+        var req = URLRequest(url: url)
+        req.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "Accept")
+        req.timeoutInterval = 10
+        URLSession.shared.dataTask(with: req) { [weak self] data, _, _ in
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let tagName = json["tag_name"] as? String else { return }
+            let cleanTag = tagName.replacingOccurrences(of: "v", with: "")
+            let current = "1.1.0"
+            if cleanTag.compare(current, options: .numeric) == .orderedDescending {
+                DispatchQueue.main.async {
+                    self?.bannerText = "发现新版本 \(tagName)"
+                    self?.bannerActionTitle = "更新..."
+                }
+            }
+        }.resume()
     }
 
     func reloadAccounts() {

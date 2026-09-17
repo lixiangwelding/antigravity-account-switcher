@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import SwiftUI
 
 // MARK: - Token Bundle
 
@@ -75,6 +76,7 @@ struct AGAccount: Identifiable, Hashable {
     var id: String { alias }
     let alias: String
     var email: String
+    var plan: String
     let authMethod: String
     var accessToken: String
     var refreshToken: String
@@ -104,6 +106,33 @@ struct AGAccount: Identifiable, Hashable {
         }
         return "?"
     }
+
+    var planLabel: String {
+        let p = plan.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        return p.isEmpty ? "FREE" : p
+    }
+
+    var planColor: Color {
+        switch planLabel {
+        case "PRO":
+            return Color(red: 0.78, green: 0.45, blue: 1.0)
+        case "ULTRA":
+            return Color(red: 1.0, green: 0.65, blue: 0.2)
+        default:
+            return Color(red: 0.35, green: 0.65, blue: 1.0)
+        }
+    }
+
+    var planBackgroundColor: Color {
+        switch planLabel {
+        case "PRO":
+            return Color(red: 0.68, green: 0.3, blue: 0.95).opacity(0.2)
+        case "ULTRA":
+            return Color(red: 0.95, green: 0.55, blue: 0.1).opacity(0.2)
+        default:
+            return Color(red: 0.25, green: 0.55, blue: 0.95).opacity(0.16)
+        }
+    }
 }
 
 // MARK: - Rate Limit Models
@@ -128,8 +157,11 @@ struct RateLimitWindow: Hashable {
 }
 
 struct RateLimitInfo: Hashable {
-    let primary: RateLimitWindow?   // 5 小时窗口
-    let secondary: RateLimitWindow? // 7 天窗口
+    let primary: RateLimitWindow?   // 5 小时窗口 (Gemini)
+    let secondary: RateLimitWindow? // 7 天窗口 (Gemini)
+    let claudePrimary: RateLimitWindow?   // 5 小时窗口 (Claude & GPT)
+    let claudeSecondary: RateLimitWindow? // 7 天窗口 (Claude & GPT)
+    let planType: String?
 }
 
 enum FetchState: Hashable {

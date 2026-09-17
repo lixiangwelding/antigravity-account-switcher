@@ -124,20 +124,38 @@ class AntigravityAuthManager {
         try? alias.write(toFile: currentFile, atomically: true, encoding: .utf8)
     }
 
-    func readEmail(alias: String) -> String {
+    func readMeta(alias: String) -> [String: Any] {
         let metaPath = "\(accountsDir)/\(alias).meta.json"
         guard let data = try? Data(contentsOf: URL(fileURLWithPath: metaPath)),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let email = json["email"] as? String else { return "?" }
-        return email
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return [:] }
+        return json
+    }
+
+    func writeMeta(alias: String, meta: [String: Any]) {
+        let metaPath = "\(accountsDir)/\(alias).meta.json"
+        if let data = try? JSONSerialization.data(withJSONObject: meta, options: .prettyPrinted) {
+            try? data.write(to: URL(fileURLWithPath: metaPath))
+        }
+    }
+
+    func readEmail(alias: String) -> String {
+        return readMeta(alias: alias)["email"] as? String ?? "?"
     }
 
     func writeEmail(alias: String, email: String) {
-        let metaPath = "\(accountsDir)/\(alias).meta.json"
-        let json: [String: Any] = ["email": email]
-        if let data = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
-            try? data.write(to: URL(fileURLWithPath: metaPath))
-        }
+        var meta = readMeta(alias: alias)
+        meta["email"] = email
+        writeMeta(alias: alias, meta: meta)
+    }
+
+    func readPlan(alias: String) -> String {
+        return readMeta(alias: alias)["plan"] as? String ?? "FREE"
+    }
+
+    func writePlan(alias: String, plan: String) {
+        var meta = readMeta(alias: alias)
+        meta["plan"] = plan
+        writeMeta(alias: alias, meta: meta)
     }
 
     func listAccounts() -> [AGAccount] {
@@ -152,6 +170,7 @@ class AntigravityAuthManager {
                 return AGAccount(
                     alias: alias,
                     email: readEmail(alias: alias),
+                    plan: readPlan(alias: alias),
                     authMethod: bundle.authMethod,
                     accessToken: bundle.accessToken,
                     refreshToken: bundle.refreshToken,
@@ -312,6 +331,7 @@ class AntigravityAuthManager {
             let newAcct = AGAccount(
                 alias: finalAlias,
                 email: "识别中…",
+                plan: "FREE",
                 authMethod: live.authMethod,
                 accessToken: live.accessToken,
                 refreshToken: live.refreshToken,

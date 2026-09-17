@@ -71,7 +71,7 @@ codesign --force --deep --sign - "${APP_DIR}" 2>/dev/null || true
 
 echo "[4/4] 安装到 /Applications..."
 # 如果系统中正在运行旧的 Antigravity Switcher，安全终止以便覆盖升级
-pkill -f "Antigravity Switcher.app/Contents/MacOS/AntigravitySwitcher" 2>/dev/null || true
+killall AntigravitySwitcher 2>/dev/null || pkill -9 -f AntigravitySwitcher 2>/dev/null || true
 sleep 0.5
 rm -rf "/Applications/${APP_NAME}.app" 2>/dev/null || true
 cp -R "${APP_DIR}" "/Applications/${APP_NAME}.app"

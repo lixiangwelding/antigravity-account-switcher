@@ -6,7 +6,10 @@ class RateLimitClient {
     private let clientID = "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com"
     private let clientSecret = "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"
     private let tokenURL = "https://oauth2.googleapis.com/token"
-    private let quotaURL = "https://cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary"
+
+    // 关键修正：Antigravity 真实日常动态配额端点，带实时 remainingFraction 消耗！
+    private let quotaURL = "https://daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary"
+    private let codeAssistURL = "https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist"
     private let userinfoURL = "https://www.googleapis.com/oauth2/v2/userinfo"
 
     var usageByAlias: [String: FetchState] = [:]
@@ -39,6 +42,7 @@ class RateLimitClient {
 
         func proceed(with access: String) {
             self.fetchQuota(access: access, alias: alias)
+            self.fetchPlan(access: access, alias: alias)
             if auth.readEmail(alias: alias) == "?" || auth.readEmail(alias: alias) == "识别中…" {
                 self.resolveEmail(access: access, alias: alias)
             }
@@ -111,6 +115,47 @@ class RateLimitClient {
         }.resume()
     }
 
+    /// 获取账号当前 Plan（PRO / FREE / ULTRA）
+    private func fetchPlan(access: String, alias: String) {
+        guard let url = URL(string: codeAssistURL) else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = "{}".data(using: .utf8)
+        request.setValue("Bearer \(access)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("antigravity", forHTTPHeaderField: "User-Agent")
+        request.timeoutInterval = 15
+        URLSession.shared.dataTask(with: request) { data, response, _ in
+            guard let http = response as? HTTPURLResponse, http.statusCode == 200,
+                  let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+
+            let currentTier = json["currentTier"] as? [String: Any] ?? [:]
+            let tierId = (currentTier["id"] as? String ?? "").lowercased()
+            let tierName = (currentTier["name"] as? String ?? "").lowercased()
+
+            var plan = "FREE"
+            if tierId.contains("pro") || tierName.contains("pro") {
+                plan = "PRO"
+            } else if tierId.contains("ultra") || tierName.contains("ultra") {
+                plan = "ULTRA"
+            } else if tierId.contains("standard") {
+                plan = "STANDARD"
+            } else {
+                plan = "FREE"
+            }
+
+            DispatchQueue.main.async {
+                let auth = AntigravityAuthManager.shared
+                let meta = auth.readMeta(alias: alias)
+                if meta["plan"] as? String != plan {
+                    auth.writePlan(alias: alias, plan: plan)
+                    AppState.shared.reloadAccounts()
+                }
+            }
+        }.resume()
+    }
+
     private func resolveEmail(access: String, alias: String) {
         guard let url = URL(string: userinfoURL) else { return }
         var request = URLRequest(url: url)
@@ -146,24 +191,55 @@ class RateLimitClient {
     private func parseResponse(_ json: [String: Any]) -> RateLimitInfo {
         var primary: RateLimitWindow? = nil
         var secondary: RateLimitWindow? = nil
+        var claudePrimary: RateLimitWindow? = nil
+        var claudeSecondary: RateLimitWindow? = nil
+
         if let groups = json["groups"] as? [[String: Any]] {
-            var five: [RateLimitWindow] = []
-            var week: [RateLimitWindow] = []
             for g in groups {
+                let groupName = (g["displayName"] as? String ?? "").lowercased()
                 guard let buckets = g["buckets"] as? [[String: Any]] else { continue }
+
+                var fiveWindow: RateLimitWindow?
+                var weeklyWindow: RateLimitWindow?
+
                 for b in buckets {
                     let window = b["window"] as? String ?? ""
                     guard let frac = b["remainingFraction"] as? Double else { continue }
                     let remaining = Int((frac * 100).rounded())
                     let reset = (b["resetTime"] as? String).flatMap { parseISO($0) }
                     let w = RateLimitWindow(usedPercent: 100 - remaining, resetsAt: reset)
-                    if window == "5h" { five.append(w) }
-                    else if window == "weekly" { week.append(w) }
+                    if window == "5h" {
+                        fiveWindow = w
+                    } else if window == "weekly" {
+                        weeklyWindow = w
+                    }
+                }
+
+                if groupName.contains("gemini") {
+                    // 主模型配额（对应 Antigravity 核心 Gemini 模型池）
+                    primary = fiveWindow
+                    secondary = weeklyWindow
+                } else if groupName.contains("claude") || groupName.contains("gpt") {
+                    // 第三方模型配额
+                    claudePrimary = fiveWindow
+                    claudeSecondary = weeklyWindow
                 }
             }
-            primary = five.min { $0.remaining < $1.remaining }
-            secondary = week.min { $0.remaining < $1.remaining }
+
+            // 兜底：如果没匹配到具体名称，使用遍历出来的非空值
+            if primary == nil {
+                primary = claudePrimary
+            }
+            if secondary == nil {
+                secondary = claudeSecondary
+            }
         }
-        return RateLimitInfo(primary: primary, secondary: secondary)
+        return RateLimitInfo(
+            primary: primary,
+            secondary: secondary,
+            claudePrimary: claudePrimary,
+            claudeSecondary: claudeSecondary,
+            planType: nil
+        )
     }
 }
