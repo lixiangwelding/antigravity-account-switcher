@@ -44,7 +44,7 @@ struct AccountCardView: View {
                                     .foregroundColor(Color(white: 0.65))
                                     .frame(width: 36, alignment: .leading)
 
-                                QuotaProgressBar(remaining: primary.remaining, width: 84)
+                                QuotaProgressBar(remaining: primary.remaining, width: 68)
 
                                 Text("\(primary.remaining)%")
                                     .font(.system(size: 11, weight: .semibold))
@@ -53,8 +53,8 @@ struct AccountCardView: View {
 
                                 if let reset = primary.resetsAt {
                                     Text(formatResetTime(reset))
-                                        .font(.system(size: 10))
-                                        .foregroundColor(Color(white: 0.45))
+                                        .font(.system(size: 9.5))
+                                        .foregroundColor(Color(white: 0.5))
                                         .lineLimit(1)
                                 }
                             }
@@ -68,7 +68,7 @@ struct AccountCardView: View {
                                     .foregroundColor(Color(white: 0.65))
                                     .frame(width: 36, alignment: .leading)
 
-                                QuotaProgressBar(remaining: secondary.remaining, width: 84)
+                                QuotaProgressBar(remaining: secondary.remaining, width: 68)
 
                                 Text("\(secondary.remaining)%")
                                     .font(.system(size: 11, weight: .semibold))
@@ -77,8 +77,8 @@ struct AccountCardView: View {
 
                                 if let reset = secondary.resetsAt {
                                     Text(formatResetTime(reset))
-                                        .font(.system(size: 10))
-                                        .foregroundColor(Color(white: 0.45))
+                                        .font(.system(size: 9.5))
+                                        .foregroundColor(Color(white: 0.5))
                                         .lineLimit(1)
                                 }
                             }

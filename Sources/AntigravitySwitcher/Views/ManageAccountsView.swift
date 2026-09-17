@@ -77,7 +77,7 @@ struct ManageAccountsView: View {
             }
             .frame(maxHeight: 380)
         }
-        .frame(width: 304)
+        .frame(width: 326)
         .alert(isPresented: $showDeleteConfirm) {
             Alert(
                 title: Text("确认删除账号？"),

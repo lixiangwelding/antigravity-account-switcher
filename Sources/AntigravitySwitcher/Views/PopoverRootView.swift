@@ -34,7 +34,7 @@ struct PopoverRootView: View {
             }
             .environmentObject(appState)
         }
-        .frame(width: 304)
+        .frame(width: 326)
         .preferredColorScheme(.dark)
     }
 }

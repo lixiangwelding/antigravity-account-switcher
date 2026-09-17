@@ -244,7 +244,7 @@ struct SettingsView: View {
             }
             .frame(maxHeight: 380)
         }
-        .frame(width: 304)
+        .frame(width: 326)
         .onAppear {
             if #available(macOS 13.0, *) {
                 launchAtLogin = (SMAppService.mainApp.status == .enabled)
