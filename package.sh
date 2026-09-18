@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-VERSION="1.2.0"
+VERSION="1.2.1"
 APP_NAME="Antigravity Switcher"
 BUILD_DIR="build"
 APP_PATH="${BUILD_DIR}/${APP_NAME}.app"

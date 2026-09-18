@@ -55,13 +55,13 @@ struct AccountCardView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             // Gemini 模型组
                             if let primary = info.primary {
-                                HStack(spacing: 5) {
+                                HStack(spacing: 4) {
                                     Text("Gemini 5h")
                                         .font(.system(size: 10, weight: .medium))
                                         .foregroundColor(Color(white: 0.7))
-                                        .frame(width: 58, alignment: .leading)
+                                        .frame(width: 56, alignment: .leading)
 
-                                    QuotaProgressBar(remaining: primary.remaining, width: 62)
+                                    QuotaProgressBar(remaining: primary.remaining, width: 54)
 
                                     Text("\(primary.remaining)%")
                                         .font(.system(size: 10, weight: .bold))
@@ -73,18 +73,19 @@ struct AccountCardView: View {
                                             .font(.system(size: 8.5))
                                             .foregroundColor(Color(white: 0.45))
                                             .lineLimit(1)
+                                            .help(formatFullResetTime(reset))
                                     }
                                 }
                             }
 
                             if let secondary = info.secondary {
-                                HStack(spacing: 5) {
+                                HStack(spacing: 4) {
                                     Text("Gemini 7d")
                                         .font(.system(size: 10, weight: .medium))
                                         .foregroundColor(Color(white: 0.7))
-                                        .frame(width: 58, alignment: .leading)
+                                        .frame(width: 56, alignment: .leading)
 
-                                    QuotaProgressBar(remaining: secondary.remaining, width: 62)
+                                    QuotaProgressBar(remaining: secondary.remaining, width: 54)
 
                                     Text("\(secondary.remaining)%")
                                         .font(.system(size: 10, weight: .bold))
@@ -96,19 +97,20 @@ struct AccountCardView: View {
                                             .font(.system(size: 8.5))
                                             .foregroundColor(Color(white: 0.45))
                                             .lineLimit(1)
+                                            .help(formatFullResetTime(reset))
                                     }
                                 }
                             }
 
                             // Claude / 3P 模型组（如果有且不同于主模型）
                             if let cp = info.claudePrimary {
-                                HStack(spacing: 5) {
+                                HStack(spacing: 4) {
                                     Text("Claude 5h")
                                         .font(.system(size: 10, weight: .medium))
                                         .foregroundColor(Color(red: 0.85, green: 0.65, blue: 0.95))
-                                        .frame(width: 58, alignment: .leading)
+                                        .frame(width: 56, alignment: .leading)
 
-                                    QuotaProgressBar(remaining: cp.remaining, width: 62)
+                                    QuotaProgressBar(remaining: cp.remaining, width: 54)
 
                                     Text("\(cp.remaining)%")
                                         .font(.system(size: 10, weight: .bold))
@@ -120,18 +122,19 @@ struct AccountCardView: View {
                                             .font(.system(size: 8.5))
                                             .foregroundColor(Color(white: 0.45))
                                             .lineLimit(1)
+                                            .help(formatFullResetTime(reset))
                                     }
                                 }
                             }
 
                             if let cs = info.claudeSecondary {
-                                HStack(spacing: 5) {
+                                HStack(spacing: 4) {
                                     Text("Claude 7d")
                                         .font(.system(size: 10, weight: .medium))
                                         .foregroundColor(Color(red: 0.85, green: 0.65, blue: 0.95))
-                                        .frame(width: 58, alignment: .leading)
+                                        .frame(width: 56, alignment: .leading)
 
-                                    QuotaProgressBar(remaining: cs.remaining, width: 62)
+                                    QuotaProgressBar(remaining: cs.remaining, width: 54)
 
                                     Text("\(cs.remaining)%")
                                         .font(.system(size: 10, weight: .bold))
@@ -143,6 +146,7 @@ struct AccountCardView: View {
                                             .font(.system(size: 8.5))
                                             .foregroundColor(Color(white: 0.45))
                                             .lineLimit(1)
+                                            .help(formatFullResetTime(reset))
                                     }
                                 }
                             }

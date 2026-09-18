@@ -62,7 +62,7 @@ class AppState: ObservableObject {
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                   let tagName = json["tag_name"] as? String else { return }
             let cleanTag = tagName.replacingOccurrences(of: "v", with: "")
-            let current = "1.2.0"
+            let current = "1.2.1"
             if cleanTag.compare(current, options: .numeric) == .orderedDescending {
                 DispatchQueue.main.async {
                     self?.bannerText = "发现新版本 \(tagName)"

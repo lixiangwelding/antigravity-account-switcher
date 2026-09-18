@@ -118,7 +118,7 @@ struct MainPageView: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 10)
         }
-        .frame(width: 326)
+        .frame(width: 356)
     }
 }
 

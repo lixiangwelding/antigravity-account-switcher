@@ -21,9 +21,9 @@ macOS 菜单栏反重力（Google Antigravity）多账号切换与配额监控�
   - 支持在【管理账号】中直接点击徽标一键循环切换与自定义覆盖。
 - 📊 **Gemini & Claude 多模型细分配额监控（告别恒为 100% 假数据）**：
   - 全面对齐 Antigravity 真实使用的 `daily-cloudcode-pa` 动态端点，实时展示动态消耗；
-  - **Gemini 模型池**：展示 5 小时与 7 天核心配额及精确重置时间；
-  - **Claude / 3P 模型池**：独立薰衣草紫标签展示 Claude 3.5 Sonnet / Opus 5 小时与 7 天剩余配额；
-  - 低配额智能变色预警（<25% 橙色，<10% 红色高亮）。
+    - **Gemini 模型池**：展示 5 小时与 7 天核心配额及精确重置时间（采用“中文+阿拉伯数字”本地化排版，如“重置于 9月24日 15:36”，无截断、悬停可查看精准到秒的时间提示）；
+    - **Claude / 3P 模型池**：独立薰衣草紫标签展示 Claude 3.5 Sonnet / Opus 5 小时与 7 天剩余配额；
+    - 低配额智能变色预警（<25% 橙色，<10% 红色高亮）。
 - 👥 **二级【管理账号】页面**：
   - 直观查看所有账号档案、订阅层级与当前活跃状态。
   - 支持内联重命名别名（如修改成工作号/个人主号）。
@@ -47,8 +47,8 @@ macOS 菜单栏反重力（Google Antigravity）多账号切换与配额监控�
 
 前往 [Releases 页面](https://github.com/lixiangwelding/antigravity-account-switcher/releases) 下载最新发行版：
 
-- **DMG 安装包**：下载 `Antigravity-Switcher-v1.2.0.dmg`，双击后将 `Antigravity Switcher` 拖入 `Applications` 即可。
-- **ZIP 归档包**：下载 `Antigravity-Switcher-v1.2.0-macOS.zip` 解压使用。
+- **DMG 安装包**：下载 `Antigravity-Switcher-v1.2.1.dmg`，双击后将 `Antigravity Switcher` 拖入 `Applications` 即可。
+- **ZIP 归档包**：下载 `Antigravity-Switcher-v1.2.1-macOS.zip` 解压使用。
 
 ---
 

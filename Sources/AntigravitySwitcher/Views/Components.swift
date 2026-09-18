@@ -77,22 +77,38 @@ struct QuotaProgressBar: View {
     }
 }
 
-// MARK: - 时间格式化
+// MARK: - 时间格式化 (中文与阿拉伯数字)
 func formatResetTime(_ date: Date?) -> String {
     guard let d = date else { return "" }
     let now = Date()
     let cal = Calendar.current
 
     let df = DateFormatter()
-    df.locale = Locale(identifier: "en_US_POSIX")
+    df.locale = Locale(identifier: "zh_CN")
 
-    // 如果是今天 24 小时以内
-    if cal.isDateInToday(d) || (d.timeIntervalSince(now) < 18 * 3600 && d.timeIntervalSince(now) > 0) {
+    if cal.isDateInToday(d) {
         df.dateFormat = "HH:mm"
         return "重置于 \(df.string(from: d))"
+    } else if cal.isDateInTomorrow(d) {
+        df.dateFormat = "HH:mm"
+        return "重置于明天 \(df.string(from: d))"
     } else {
-        // 例如 Sep 19 at 21:46
-        df.dateFormat = "MMM d 'at' HH:mm"
+        // 中文和阿拉伯数字：例如 重置于 9月24日 15:36
+        let thisYear = cal.component(.year, from: now)
+        let targetYear = cal.component(.year, from: d)
+        if thisYear == targetYear {
+            df.dateFormat = "M月d日 HH:mm"
+        } else {
+            df.dateFormat = "yyyy年M月d日 HH:mm"
+        }
         return "重置于 \(df.string(from: d))"
     }
+}
+
+func formatFullResetTime(_ date: Date?) -> String {
+    guard let d = date else { return "" }
+    let df = DateFormatter()
+    df.locale = Locale(identifier: "zh_CN")
+    df.dateFormat = "yyyy年M月d日 HH:mm:ss"
+    return "预计重置时间: \(df.string(from: d))"
 }

@@ -22,9 +22,9 @@ cat > "${APP_DIR}/Contents/Info.plist" <<'PLIST'
     <key>CFBundleIdentifier</key>
     <string>com.didi.antigravity-switcher</string>
     <key>CFBundleVersion</key>
-    <string>1.2.0</string>
+    <string>1.2.1</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.2.0</string>
+    <string>1.2.1</string>
     <key>CFBundleExecutable</key>
     <string>AntigravitySwitcher</string>
     <key>CFBundlePackageType</key>
@@ -67,14 +67,22 @@ elif [ -f AppIcon.icns ]; then
 fi
 
 echo "[3/4] 签名 (ad-hoc)..."
-codesign --force --deep --sign - "${APP_DIR}" 2>/dev/null || true
+codesign --force --deep --sign - "${APP_DIR}"
+# 本机开发包不具备 Developer ID 公证，但不能残留下载/复制产生的隔离属性。
+xattr -dr com.apple.quarantine "${APP_DIR}" 2>/dev/null || true
 
 echo "[4/4] 安装到 /Applications..."
 # 如果系统中正在运行旧的 Antigravity Switcher，安全终止以便覆盖升级
-killall AntigravitySwitcher 2>/dev/null || pkill -9 -f AntigravitySwitcher 2>/dev/null || true
+killall AntigravitySwitcher 2>/dev/null || true
 sleep 0.5
-rm -rf "/Applications/${APP_NAME}.app" 2>/dev/null || true
-cp -R "${APP_DIR}" "/Applications/${APP_NAME}.app"
+INSTALL_DIR="/Applications/${APP_NAME}.app"
+if [ -e "${INSTALL_DIR}" ]; then
+    BACKUP_DIR="/Applications/${APP_NAME}.app.previous-$(date +%Y%m%d-%H%M%S)"
+    mv "${INSTALL_DIR}" "${BACKUP_DIR}"
+    echo "旧版本已保留: ${BACKUP_DIR}"
+fi
+ditto "${APP_DIR}" "${INSTALL_DIR}"
+xattr -dr com.apple.quarantine "${INSTALL_DIR}" 2>/dev/null || true
 
 echo "=================================================="
 echo "✅ 构建与安装完成！"

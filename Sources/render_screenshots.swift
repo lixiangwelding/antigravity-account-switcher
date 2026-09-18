@@ -111,15 +111,15 @@ struct ScreenshotGenerator {
 
         // 1. 主页面
         state.currentPage = .main
-        renderView(PopoverRootView(), size: NSSize(width: 326, height: 395), filename: "screenshot-main.png")
+        renderView(PopoverRootView(), size: NSSize(width: 356, height: 410), filename: "screenshot-main.png")
 
         // 2. 管理账号页面 (列表)
         state.currentPage = .manageAccounts
-        renderView(PopoverRootView(), size: NSSize(width: 326, height: 320), filename: "screenshot-manage.png")
+        renderView(PopoverRootView(), size: NSSize(width: 356, height: 330), filename: "screenshot-manage.png")
 
         // 3. 设置页面
         state.currentPage = .settings
-        renderView(PopoverRootView(), size: NSSize(width: 326, height: 430), filename: "screenshot-settings.png")
+        renderView(PopoverRootView(), size: NSSize(width: 356, height: 440), filename: "screenshot-settings.png")
 
         print("All screenshots generated successfully!")
     }
